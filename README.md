@@ -32,7 +32,7 @@ O **Agenda+** é um sistema completo de agendamento médico que permite:
 
 ### Backend
 - **Laravel 12** - Framework PHP
-- **PHP 8.2+** - Linguagem
+- **PHP 8.3** - Linguagem
 - **PostgreSQL 16** - Banco de dados
 - **Redis 7** - Cache e filas
 - **Laravel Sanctum** - Autenticação API
@@ -46,6 +46,7 @@ O **Agenda+** é um sistema completo de agendamento médico que permite:
 - **Axios** - Cliente HTTP
 - **React Hook Form** - Formulários
 - **Zustand** - Gerenciamento de estado
+- **Jest** - Testes unitários
 
 ### DevOps
 - **Docker** - Containerização
@@ -54,9 +55,9 @@ O **Agenda+** é um sistema completo de agendamento médico que permite:
 
 ## 📦 Requisitos
 
-- Docker e Docker Compose
+- Docker e Docker Compose (recomendado)
 - Node.js 20+ (para desenvolvimento local)
-- PHP 8.2+ (para desenvolvimento local)
+- PHP 8.3+ (para desenvolvimento local)
 - Composer (para desenvolvimento local)
 
 ## 🚀 Instalação
@@ -65,32 +66,58 @@ O **Agenda+** é um sistema completo de agendamento médico que permite:
 
 1. Clone o repositório:
 ```bash
-git clone <repository-url>
-cd "app agenda+"
+git clone https://github.com/Battisti-Daniel/M3_MPS.git
+cd M3_MPS
 ```
 
-2. Configure as variáveis de ambiente:
+2. Inicie os containers:
 ```bash
-cp backend/.env.example backend/.env
-cp frontend/.env.example frontend/.env.local
+docker-compose up -d --build
 ```
 
-3. Inicie os containers:
-```bash
-docker-compose up -d
-```
+3. Aguarde os containers iniciarem completamente (primeira vez pode levar alguns minutos).
 
-4. Execute as migrações:
+4. Execute as migrações e seeds:
 ```bash
-docker-compose exec backend php artisan migrate
-docker-compose exec backend php artisan db:seed
+docker exec agenda_backend php artisan migrate --force
+docker exec agenda_backend php artisan db:seed
 ```
 
 5. Acesse a aplicação:
-- Frontend: http://localhost:3000
-- Backend API: http://localhost:8000
-- API Docs (Swagger): http://localhost:8000/api/documentation
-- Mailpit: http://localhost:8025
+- **Frontend**: http://localhost:3000
+- **Backend API**: http://localhost:8000
+- **API Docs (Swagger)**: http://localhost:8000/api/documentation
+- **Mailpit (emails)**: http://localhost:8025
+- **PostgreSQL**: localhost:5434 (user: agenda, password: agenda)
+
+### Credenciais de Teste (após seed)
+
+| Tipo | Email | Senha |
+|------|-------|-------|
+| Admin | admin@agenda.com | password |
+| Médico | medico@agenda.com | password |
+| Paciente | paciente@agenda.com | password |
+
+### Comandos Úteis Docker
+
+```bash
+# Ver logs de todos os containers
+docker-compose logs -f
+
+# Ver logs de um container específico
+docker-compose logs -f backend
+docker-compose logs -f frontend
+
+# Reiniciar containers
+docker-compose restart
+
+# Parar containers
+docker-compose down
+
+# Limpar tudo e recomeçar
+docker-compose down -v
+docker-compose up -d --build
+```
 
 ### Desenvolvimento Local
 
@@ -118,29 +145,26 @@ npm run dev
 
 ### Variáveis de Ambiente
 
-#### Backend (.env)
+As variáveis de ambiente já estão configuradas no `docker-compose.yml` para desenvolvimento. Não é necessário criar arquivos `.env` manualmente quando usando Docker.
+
+#### Backend (configurado automaticamente no Docker)
 ```env
-APP_NAME="Agenda+"
 APP_ENV=local
 APP_DEBUG=true
 APP_URL=http://localhost:8000
-
 DB_CONNECTION=pgsql
 DB_HOST=db
 DB_PORT=5432
 DB_DATABASE=agenda
 DB_USERNAME=agenda
 DB_PASSWORD=agenda
-
 REDIS_HOST=redis
 REDIS_PORT=6379
-
-MAIL_MAILER=smtp
 MAIL_HOST=mailpit
 MAIL_PORT=1025
 ```
 
-#### Frontend (.env.local)
+#### Frontend (configurado automaticamente no Docker)
 ```env
 NEXT_PUBLIC_API_URL=http://localhost:8000/api
 ```
@@ -165,45 +189,84 @@ Consulte a documentação Swagger em `/api/documentation` para todos os endpoint
 
 ## 🧪 Testes
 
-### Backend
+### Backend (PHPUnit)
 
 ```bash
-# Todos os testes
-cd backend
-php artisan test
+# Executar todos os testes
+docker exec agenda_backend php artisan test
 
 # Com cobertura
-php artisan test --coverage
+docker exec agenda_backend php artisan test --coverage
 
 # Testes específicos
-php artisan test --filter AppointmentTest
+docker exec agenda_backend php artisan test --filter AppointmentTest
 ```
 
-### Frontend
+**Status atual**: 98 testes passando ✅
+
+### Frontend (Jest)
 
 ```bash
-# Todos os testes
-cd frontend
-npm test
+# Executar todos os testes
+docker exec agenda_frontend npm test
 
 # Com cobertura
-npm run test:coverage
+docker exec agenda_frontend npm test -- --coverage --watchAll=false
 
-# Modo watch
-npm run test:watch
+# Modo watch (desenvolvimento local)
+cd frontend && npm run test:watch
 ```
 
-### Cobertura Mínima
+**Status atual**: 490 testes passando ✅ | Cobertura: 70.75%
 
-- Backend: 70%
-- Frontend: 70%
+### Cobertura de Testes
+
+| Área | Cobertura |
+|------|-----------|
+| Backend | ~96% (98 testes) |
+| Frontend - Services | 99% |
+| Frontend - Hooks | 100% |
+| Frontend - Stores | 100% |
+| Frontend - Total | 70.75% |
 
 ## 📚 Documentação
 
-- [Documentação da API](./backend/AUTENTICACAO.md)
+- [Documentação da API (Swagger)](http://localhost:8000/api/documentation) - Disponível após iniciar o backend
+- [Autenticação](./backend/AUTENTICACAO.md)
 - [Guia de Testes](./backend/tests/README_TESTS.md)
 - [Documentação de Deploy](./deploy/production/README.md)
 - [Runbooks](./docs/runbooks/)
+
+## 🔧 Solução de Problemas
+
+### Container não inicia
+```bash
+# Verifique os logs
+docker-compose logs -f backend
+
+# Recrie os containers
+docker-compose down -v
+docker-compose up -d --build
+```
+
+### Erro de migração
+```bash
+# Limpe o banco e rode novamente
+docker exec agenda_backend php artisan migrate:fresh --seed
+```
+
+### Frontend não conecta ao backend
+Verifique se o backend está rodando e acessível em http://localhost:8000/api/health/ping
+
+### Jobs não executam (Redis)
+```bash
+# Verifique o container Redis
+docker exec agenda_redis redis-cli ping
+# Deve retornar: PONG
+
+# Processe jobs manualmente
+docker exec agenda_backend php artisan queue:work --once
+```
 
 ## 🤝 Contribuindo
 
@@ -226,13 +289,9 @@ Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para ma
 
 ## 👥 Autores
 
-- **Equipe de Desenvolvimento** - [GitHub](https://github.com)
-
-## 🙏 Agradecimentos
-
-- Laravel Framework
-- Next.js Team
-- Comunidade Open Source
+- **Battisti-Daniel** - [GitHub](https://github.com/Battisti-Daniel)
 
 ---
+
+**Agenda+** - Sistema de Agendamento Médico © 2025
 
