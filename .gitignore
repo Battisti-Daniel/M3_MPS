@@ -1,0 +1,87 @@
+# Sistema Agenda+
+
+# Logs
+logs/
+*.log
+*.log.*
+storage/logs/*
+storage/framework/cache/*
+storage/framework/sessions/*
+storage/framework/views/*
+bootstrap/cache/*
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Dependências
+vendor/
+node_modules/
+.pnp/
+.pnp.js
+
+# Ambientes
+.env
+.env.*.local
+.env.local
+.env.production
+.env.development
+.env.testing
+!.env.example
+!.env.*.example
+
+# Build outputs
+public/build/
+public/hot
+public/storage
+storage/app/public
+.next/
+out/
+coverage/
+dist/
+build/
+.vercel/
+
+# IDE/OS
+.idea/
+.vscode/
+*.swp
+*.swo
+*.tmp
+*.temp
+Thumbs.db
+.DS_Store
+
+# Docker
+docker/data/
+docker/logs/
+
+# Test artifacts
+clover.xml
+junit.xml
+test-results/
+
+# Cache
+.cache/
+.vite/
+.eslintcache
+.stylelintcache
+.tsbuildinfo
+
+# Composer/NPM
+# Allow backend/composer.lock and frontend/package-lock.json for Docker builds
+!backend/composer.lock
+!frontend/package-lock.json
+# Ignore composer.lock in other locations
+**/composer.lock
+!backend/composer.lock
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+
+# Misc
+.coverage
+.nyc_output
+reports/
+
+

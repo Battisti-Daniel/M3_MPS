@@ -1,0 +1,2314 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Agenda+ API",
+        "description": "API RESTful para sistema de gestão de consultas médicas Agenda+",
+        "contact": {
+            "name": "Suporte Agenda+",
+            "email": "suporte@agendaplus.com"
+        },
+        "license": {
+            "name": "MIT",
+            "url": "https://opensource.org/licenses/MIT"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "/api",
+            "description": "Servidor da API"
+        }
+    ],
+    "paths": {
+        "/admin/doctors": {
+            "get": {
+                "tags": [
+                    "Administração"
+                ],
+                "summary": "Listar médicos",
+                "description": "Lista todos os médicos cadastrados. Apenas administradores podem acessar.",
+                "operationId": "caf8a50c03ad30b07043171a326ff742",
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "is_active",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 15
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lista de médicos",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Apenas administradores"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Administração"
+                ],
+                "summary": "Cadastrar médico",
+                "description": "Cria um novo médico. CRM deve ser único. Senha mínima de 8 caracteres.",
+                "operationId": "7c2433806210dc3db74278a9ed116ca7",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "email",
+                                    "crm",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Dr. João Silva"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email"
+                                    },
+                                    "phone": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "description": "Mínimo 8 caracteres",
+                                        "type": "string",
+                                        "format": "password"
+                                    },
+                                    "crm": {
+                                        "type": "string",
+                                        "example": "123456-SP"
+                                    },
+                                    "specialty": {
+                                        "type": "string",
+                                        "example": "Cardiologia"
+                                    },
+                                    "health_insurances": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "integer"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Médico cadastrado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Dados inválidos ou CRM duplicado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/admin/doctors/{id}": {
+            "get": {
+                "tags": [
+                    "Administração"
+                ],
+                "summary": "Obter detalhes do médico",
+                "description": "Retorna os detalhes completos de um médico",
+                "operationId": "d36ac29baead9f862c3d4e7f0c3ccfb0",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Detalhes do médico",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Médico não encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Administração"
+                ],
+                "summary": "Atualizar médico",
+                "description": "Atualiza os dados de um médico",
+                "operationId": "e140dcc384e108e5c84311e822e10a8b",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Médico atualizado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Dados inválidos"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Administração"
+                ],
+                "summary": "Inativar médico",
+                "description": "Inativa um médico usando soft delete",
+                "operationId": "05ce810a3790daf7992040719c22234b",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Médico inativado"
+                    },
+                    "404": {
+                        "description": "Médico não encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/admin/patients": {
+            "get": {
+                "tags": [
+                    "Administração"
+                ],
+                "summary": "Listar pacientes",
+                "description": "Lista todos os pacientes cadastrados. Apenas administradores podem acessar.",
+                "operationId": "f29170ce4f22a89590f87d9bcd9dea42",
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Buscar por nome, CPF, email ou telefone",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "is_active",
+                        "in": "query",
+                        "description": "Filtrar por status ativo",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Itens por página",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 15
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lista de pacientes paginada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Não autenticado"
+                    },
+                    "403": {
+                        "description": "Apenas administradores"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Administração"
+                ],
+                "summary": "Cadastrar paciente",
+                "description": "Cria um novo paciente. Se senha não for informada, será gerada automaticamente (12 caracteres) e enviada por e-mail de boas-vindas. CPF deve ser único.",
+                "operationId": "29cf12c9e51f14fcf831c4222a0a6477",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "email",
+                                    "cpf",
+                                    "birth_date"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "João Silva"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "joao@example.com"
+                                    },
+                                    "phone": {
+                                        "type": "string",
+                                        "example": "(11) 99999-9999"
+                                    },
+                                    "password": {
+                                        "description": "Opcional - será gerada se não informada (mínimo 8 caracteres)",
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "senha123"
+                                    },
+                                    "cpf": {
+                                        "type": "string",
+                                        "example": "123.456.789-00"
+                                    },
+                                    "birth_date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "1990-01-15"
+                                    },
+                                    "gender": {
+                                        "type": "string",
+                                        "enum": [
+                                            "M",
+                                            "F",
+                                            "OTHER"
+                                        ]
+                                    },
+                                    "address": {
+                                        "type": "string",
+                                        "example": "Rua Exemplo, 123"
+                                    },
+                                    "health_insurances": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "integer"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Paciente cadastrado com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Dados inválidos ou CPF duplicado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/admin/patients/{id}": {
+            "get": {
+                "tags": [
+                    "Administração"
+                ],
+                "summary": "Obter detalhes do paciente",
+                "description": "Retorna os detalhes completos de um paciente incluindo usuário e convênios vinculados",
+                "operationId": "9985b17e8f7a2a55ce4aa07d9fee77ea",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Detalhes do paciente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Paciente não encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Administração"
+                ],
+                "summary": "Atualizar paciente",
+                "description": "Atualiza os dados de um paciente. Todos os campos são opcionais (partial update).",
+                "operationId": "66e9168eda69b8e848bb2ded38b28ed1",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email"
+                                    },
+                                    "phone": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "description": "Mínimo 8 caracteres",
+                                        "type": "string",
+                                        "format": "password"
+                                    },
+                                    "birth_date": {
+                                        "type": "string",
+                                        "format": "date"
+                                    },
+                                    "gender": {
+                                        "type": "string"
+                                    },
+                                    "address": {
+                                        "type": "string"
+                                    },
+                                    "is_active": {
+                                        "type": "boolean"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Paciente atualizado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Dados inválidos"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Administração"
+                ],
+                "summary": "Inativar paciente",
+                "description": "Inativa um paciente usando soft delete. O registro não é removido fisicamente do banco.",
+                "operationId": "c52df880be2d1f509f42fcf927ae6e0a",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Paciente inativado"
+                    },
+                    "404": {
+                        "description": "Paciente não encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/admin/reports/appointments": {
+            "get": {
+                "tags": [
+                    "Relatórios"
+                ],
+                "summary": "Relatório de resumo de consultas (JSON)",
+                "description": "Retorna resumo estatístico de consultas em formato JSON. Inclui total por status, percentuais e tendência diária.",
+                "operationId": "70124415ec269dbb3feaa943c7f0302f",
+                "parameters": [
+                    {
+                        "name": "start_date",
+                        "in": "query",
+                        "description": "Data inicial (Y-m-d)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    },
+                    {
+                        "name": "end_date",
+                        "in": "query",
+                        "description": "Data final (Y-m-d)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    },
+                    {
+                        "name": "doctor_id",
+                        "in": "query",
+                        "description": "Filtrar por médico",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Dados do relatório",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Não autenticado"
+                    },
+                    "403": {
+                        "description": "Apenas administradores"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/admin/reports/appointments/pdf": {
+            "get": {
+                "tags": [
+                    "Relatórios"
+                ],
+                "summary": "Gerar PDF - Resumo de consultas",
+                "description": "Gera e baixa relatório em PDF do resumo de consultas com gráficos e estatísticas",
+                "operationId": "4d548a4c4349e53b2ffb7abaecbd7528",
+                "parameters": [
+                    {
+                        "name": "start_date",
+                        "in": "query",
+                        "description": "Data inicial (Y-m-d)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    },
+                    {
+                        "name": "end_date",
+                        "in": "query",
+                        "description": "Data final (Y-m-d)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Arquivo PDF",
+                        "content": {
+                            "application/pdf": {}
+                        }
+                    },
+                    "401": {
+                        "description": "Não autenticado"
+                    },
+                    "403": {
+                        "description": "Apenas administradores"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/admin/reports/doctor-occupancy": {
+            "get": {
+                "tags": [
+                    "Relatórios"
+                ],
+                "summary": "Relatório de ocupação de médicos (JSON)",
+                "description": "Retorna dados de ocupação dos médicos em formato JSON. Inclui total de consultas, confirmadas, realizadas e taxa de ocupação.",
+                "operationId": "fee8bc72e1c479efc6daa8ebd2e28b17",
+                "parameters": [
+                    {
+                        "name": "start_date",
+                        "in": "query",
+                        "description": "Data inicial (Y-m-d)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    },
+                    {
+                        "name": "end_date",
+                        "in": "query",
+                        "description": "Data final (Y-m-d)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    },
+                    {
+                        "name": "doctor_id",
+                        "in": "query",
+                        "description": "Filtrar por médico específico",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Dados de ocupação",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Não autenticado"
+                    },
+                    "403": {
+                        "description": "Apenas administradores"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/admin/reports/doctor-occupancy/pdf": {
+            "get": {
+                "tags": [
+                    "Relatórios"
+                ],
+                "summary": "Gerar PDF - Ocupação de médicos",
+                "description": "Gera e baixa relatório em PDF de ocupação dos médicos com tabela comparativa",
+                "operationId": "9078530427b7f3e389a31946c19e256a",
+                "parameters": [
+                    {
+                        "name": "start_date",
+                        "in": "query",
+                        "description": "Data inicial (Y-m-d)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    },
+                    {
+                        "name": "end_date",
+                        "in": "query",
+                        "description": "Data final (Y-m-d)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Arquivo PDF",
+                        "content": {
+                            "application/pdf": {}
+                        }
+                    },
+                    "401": {
+                        "description": "Não autenticado"
+                    },
+                    "403": {
+                        "description": "Apenas administradores"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/admin/reports/insurance-usage": {
+            "get": {
+                "tags": [
+                    "Relatórios"
+                ],
+                "summary": "Relatório de uso de convênios (JSON)",
+                "description": "Retorna dados de uso dos convênios em formato JSON. Mostra quantidade de consultas por convênio no período.",
+                "operationId": "9f9ee183548e1cb04157099b0b053e5d",
+                "parameters": [
+                    {
+                        "name": "start_date",
+                        "in": "query",
+                        "description": "Data inicial (Y-m-d)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    },
+                    {
+                        "name": "end_date",
+                        "in": "query",
+                        "description": "Data final (Y-m-d)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Dados de uso de convênios",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Não autenticado"
+                    },
+                    "403": {
+                        "description": "Apenas administradores"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/admin/reports/insurance-usage/pdf": {
+            "get": {
+                "tags": [
+                    "Relatórios"
+                ],
+                "summary": "Gerar PDF - Uso de convênios",
+                "description": "Gera e baixa relatório em PDF de uso de convênios com estatísticas",
+                "operationId": "e8a6ecd54bd0822ab6a0fd98ab01de46",
+                "parameters": [
+                    {
+                        "name": "start_date",
+                        "in": "query",
+                        "description": "Data inicial (Y-m-d)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    },
+                    {
+                        "name": "end_date",
+                        "in": "query",
+                        "description": "Data final (Y-m-d)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Arquivo PDF",
+                        "content": {
+                            "application/pdf": {}
+                        }
+                    },
+                    "401": {
+                        "description": "Não autenticado"
+                    },
+                    "403": {
+                        "description": "Apenas administradores"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/appointments": {
+            "get": {
+                "tags": [
+                    "Consultas"
+                ],
+                "summary": "Listar consultas",
+                "description": "Lista consultas do usuário autenticado. Retorna consultas diferentes conforme o perfil: paciente vê suas consultas, médico vê suas consultas, admin vê todas.",
+                "operationId": "8aa3c0802355a81b59ed07d68f2f7867",
+                "parameters": [
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "Filtrar por status",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "PENDING",
+                                "CONFIRMED",
+                                "COMPLETED",
+                                "CANCELLED"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "period",
+                        "in": "query",
+                        "description": "Filtrar por período: future (futuras), past (passadas), all (todas)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "future",
+                                "past",
+                                "all"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Itens por página",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 10
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lista de consultas paginada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Não autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Consultas"
+                ],
+                "summary": "Agendar consulta",
+                "description": "Cria um novo agendamento de consulta. Requer antecedência mínima de 24h, perfil completo do paciente e médico ativo.",
+                "operationId": "339467c94dffe0e8055dcc340f715673",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "doctor_id",
+                                    "scheduled_at"
+                                ],
+                                "properties": {
+                                    "doctor_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "scheduled_at": {
+                                        "type": "string",
+                                        "format": "date-time",
+                                        "example": "2025-12-01 14:00:00"
+                                    },
+                                    "duration_minutes": {
+                                        "type": "integer",
+                                        "example": 30
+                                    },
+                                    "type": {
+                                        "type": "string",
+                                        "example": "PRESENTIAL"
+                                    },
+                                    "price": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 150
+                                    },
+                                    "notes": {
+                                        "type": "string",
+                                        "example": "Consulta de rotina"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Consulta agendada com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Dados inválidos ou regras de negócio violadas"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/appointments/{id}": {
+            "get": {
+                "tags": [
+                    "Consultas"
+                ],
+                "summary": "Obter detalhes da consulta",
+                "description": "Retorna os detalhes completos de uma consulta incluindo médico, paciente, observações e logs",
+                "operationId": "4e5d96ed4b005cf155a6af5d6eaac0cd",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID da consulta",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Detalhes da consulta",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Não autorizado para esta consulta"
+                    },
+                    "404": {
+                        "description": "Consulta não encontrada"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/appointments/{id}/confirm": {
+            "post": {
+                "tags": [
+                    "Consultas"
+                ],
+                "summary": "Confirmar consulta",
+                "description": "Confirma uma consulta pendente. Apenas o médico responsável ou admin pode confirmar.",
+                "operationId": "deed19c8fa711b1c1d4ad05aac275e1c",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Consulta confirmada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Não autorizado"
+                    },
+                    "422": {
+                        "description": "Transição de status inválida"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/appointments/{id}/complete": {
+            "post": {
+                "tags": [
+                    "Consultas"
+                ],
+                "summary": "Marcar consulta como realizada",
+                "description": "Marca uma consulta confirmada como realizada. Apenas médico ou admin pode executar.",
+                "operationId": "0113ef4f8789ac15b5dbfde5108b76e3",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Consulta marcada como realizada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Não autorizado"
+                    },
+                    "422": {
+                        "description": "Transição de status inválida"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/appointments/{id}/cancel": {
+            "post": {
+                "tags": [
+                    "Consultas"
+                ],
+                "summary": "Cancelar consulta",
+                "description": "Cancela uma consulta. Requer antecedência mínima de 12h. Pacientes e médicos podem cancelar suas próprias consultas, admin pode cancelar qualquer consulta.",
+                "operationId": "7348b329f412a5316ba5b1789d91524a",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "reason": {
+                                        "type": "string",
+                                        "example": "Imprevisto pessoal"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Consulta cancelada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Não autorizado"
+                    },
+                    "422": {
+                        "description": "Cancelamento não permitido (menos de 12h de antecedência)"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/appointments/{id}/reschedule": {
+            "post": {
+                "tags": [
+                    "Consultas"
+                ],
+                "summary": "Remarcar consulta",
+                "description": "Remarca uma consulta para nova data/horário. Máximo de 2 remarcações por consulta. Requer antecedência mínima de 12h.",
+                "operationId": "00b8d2c694ff0a1c1c2e30e6f0120d1c",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "scheduled_at"
+                                ],
+                                "properties": {
+                                    "scheduled_at": {
+                                        "type": "string",
+                                        "format": "date-time",
+                                        "example": "2025-12-05 15:00:00"
+                                    },
+                                    "duration_minutes": {
+                                        "type": "integer",
+                                        "example": 30
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Consulta remarcada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Não autorizado"
+                    },
+                    "422": {
+                        "description": "Limite de remarcações atingido ou dados inválidos"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/auth/login": {
+            "post": {
+                "tags": [
+                    "Autenticação"
+                ],
+                "summary": "Realizar login",
+                "description": "Autentica um usuário e retorna um token de acesso. Após 3 tentativas falhas, a conta é bloqueada por 30 minutos.",
+                "operationId": "1ff9c65c5cd1a8e0786e318eed856972",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "paciente@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "senha123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Login realizado com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "token": {
+                                            "type": "string",
+                                            "example": "1|abcdef123456..."
+                                        },
+                                        "user": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Credenciais inválidas"
+                    },
+                    "429": {
+                        "description": "Muitas tentativas. Conta bloqueada temporariamente"
+                    }
+                }
+            }
+        },
+        "/auth/me": {
+            "get": {
+                "tags": [
+                    "Autenticação"
+                ],
+                "summary": "Obter usuário autenticado",
+                "description": "Retorna os dados completos do usuário autenticado incluindo relacionamentos",
+                "operationId": "257a57ee6760f86fb4b11ff94dba1f38",
+                "responses": {
+                    "200": {
+                        "description": "Dados do usuário",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Não autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/auth/logout": {
+            "post": {
+                "tags": [
+                    "Autenticação"
+                ],
+                "summary": "Encerrar sessão",
+                "description": "Invalida o token de autenticação atual",
+                "operationId": "eae6a8251a6469bbabe454860f64cf37",
+                "responses": {
+                    "200": {
+                        "description": "Sessão encerrada com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Sessão encerrada com sucesso."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Não autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/auth/password/forgot": {
+            "post": {
+                "tags": [
+                    "Autenticação"
+                ],
+                "summary": "Solicitar recuperação de senha",
+                "description": "Envia um e-mail com link para redefinição de senha",
+                "operationId": "0651ffc015b921132981b18dd023d825",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "usuario@example.com"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Link de recuperação enviado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "E-mail não encontrado"
+                    }
+                }
+            }
+        },
+        "/api/auth/password/reset": {
+            "post": {
+                "tags": [
+                    "Autenticação"
+                ],
+                "summary": "Redefinir senha",
+                "description": "Redefine a senha usando o token recebido por e-mail",
+                "operationId": "a73ca7e5e94de54f9944cb51343d06c6",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "token",
+                                    "email",
+                                    "password",
+                                    "password_confirmation"
+                                ],
+                                "properties": {
+                                    "token": {
+                                        "type": "string",
+                                        "example": "abc123..."
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "usuario@example.com"
+                                    },
+                                    "password": {
+                                        "description": "Mínimo 8 caracteres",
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "novaSenha123"
+                                    },
+                                    "password_confirmation": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "novaSenha123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Senha redefinida com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Token inválido ou expirado"
+                    }
+                }
+            }
+        },
+        "/health-insurances": {
+            "get": {
+                "tags": [
+                    "Convênios"
+                ],
+                "summary": "Listar convênios ativos",
+                "description": "Lista todos os convênios ativos disponíveis. Endpoint público (não requer autenticação).",
+                "operationId": "ab59cba0902d02b41e7a47339442aea7",
+                "responses": {
+                    "200": {
+                        "description": "Lista de convênios",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Convênios"
+                ],
+                "summary": "Criar convênio",
+                "description": "Cria um novo convênio. Apenas administradores podem criar convênios.",
+                "operationId": "30daf5a2627ff87f0b544fb0b25c0464",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Unimed"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Plano de saúde"
+                                    },
+                                    "coverage_percentage": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 80
+                                    },
+                                    "is_active": {
+                                        "type": "boolean",
+                                        "example": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Convênio criado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Apenas administradores"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/health-insurances/{id}": {
+            "put": {
+                "tags": [
+                    "Convênios"
+                ],
+                "summary": "Atualizar convênio",
+                "description": "Atualiza dados de um convênio. Apenas administradores podem atualizar.",
+                "operationId": "bdafc3ebfb5aabcd390bfa6cd22206ef",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string"
+                                    },
+                                    "description": {
+                                        "type": "string"
+                                    },
+                                    "coverage_percentage": {
+                                        "type": "number",
+                                        "format": "float"
+                                    },
+                                    "is_active": {
+                                        "type": "boolean"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Convênio atualizado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Apenas administradores"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Convênios"
+                ],
+                "summary": "Inativar convênio",
+                "description": "Inativa um convênio usando soft delete. O registro não é removido fisicamente. Apenas administradores podem inativar.",
+                "operationId": "efd2a3e85bb59ce350745996851e1ac6",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Convênio inativado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Apenas administradores"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/appointments/{id}/observations": {
+            "post": {
+                "tags": [
+                    "Observações"
+                ],
+                "summary": "Registrar observação clínica",
+                "description": "Registra uma observação clínica para uma consulta. Apenas o médico responsável pela consulta pode registrar observações.",
+                "operationId": "334aba87c739ce7f7885de2c19d5139f",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID da consulta",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "anamnesis"
+                                ],
+                                "properties": {
+                                    "anamnesis": {
+                                        "type": "string",
+                                        "example": "Paciente relata dor de cabeça há 3 dias"
+                                    },
+                                    "diagnosis": {
+                                        "type": "string",
+                                        "example": "Cefaleia tensional"
+                                    },
+                                    "prescription": {
+                                        "type": "string",
+                                        "example": "Paracetamol 500mg, 1 comprimido a cada 8h"
+                                    },
+                                    "notes": {
+                                        "type": "string",
+                                        "example": "Retorno em 7 dias se persistir"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Observação registrada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Apenas o médico responsável pode registrar observações"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/patient/observations": {
+            "get": {
+                "tags": [
+                    "Observações"
+                ],
+                "summary": "Listar observações do paciente",
+                "description": "Lista observações clínicas do paciente autenticado. Pacientes não veem conteúdo completo (anamnesis, diagnosis, prescription, notes são ocultados por sigilo médico).",
+                "operationId": "37640e48f6146057578b5d3becbebb7e",
+                "parameters": [
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Itens por página",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 20
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lista de observações (conteúdo clínico oculto para pacientes)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/doctor/patients/{id}/observations": {
+            "get": {
+                "tags": [
+                    "Observações"
+                ],
+                "summary": "Histórico de observações do paciente (médico)",
+                "description": "Lista histórico completo de observações de um paciente. Apenas médicos que já atenderam o paciente podem acessar o histórico completo.",
+                "operationId": "10b7279cf23a381126348ee3fc936301",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID do paciente",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Itens por página",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 20
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Histórico completo de observações",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Médico não possui atendimentos para este paciente"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/doctor/schedules": {
+            "get": {
+                "tags": [
+                    "Agenda"
+                ],
+                "summary": "Listar horários da agenda",
+                "description": "Lista todos os horários configurados pelo médico autenticado",
+                "operationId": "a97af96e73490e863820b21ec6222ed5",
+                "responses": {
+                    "200": {
+                        "description": "Lista de horários paginada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Não autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Agenda"
+                ],
+                "summary": "Criar horário na agenda",
+                "description": "Adiciona um novo horário na agenda do médico. A agenda deve ter no mínimo 4h semanais disponíveis.",
+                "operationId": "7c190cba42099b2fd5e644c018394335",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "day_of_week",
+                                    "start_time",
+                                    "end_time"
+                                ],
+                                "properties": {
+                                    "day_of_week": {
+                                        "description": "1=Segunda, 7=Domingo",
+                                        "type": "integer",
+                                        "maximum": 7,
+                                        "minimum": 1,
+                                        "example": 1
+                                    },
+                                    "start_time": {
+                                        "type": "string",
+                                        "format": "time",
+                                        "example": "08:00"
+                                    },
+                                    "end_time": {
+                                        "type": "string",
+                                        "format": "time",
+                                        "example": "12:00"
+                                    },
+                                    "slot_duration_minutes": {
+                                        "type": "integer",
+                                        "example": 30
+                                    },
+                                    "is_blocked": {
+                                        "type": "boolean",
+                                        "example": false
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Horário criado com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Conflito de horário ou mínimo de 4h não atingido"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/doctor/schedules/{id}": {
+            "put": {
+                "tags": [
+                    "Agenda"
+                ],
+                "summary": "Atualizar horário",
+                "description": "Atualiza um horário existente. Não é possível atualizar horários que possuem consultas agendadas.",
+                "operationId": "cbb7992417631c4c0d8a02639ff1c374",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "day_of_week": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "start_time": {
+                                        "type": "string",
+                                        "format": "time",
+                                        "example": "09:00"
+                                    },
+                                    "end_time": {
+                                        "type": "string",
+                                        "format": "time",
+                                        "example": "13:00"
+                                    },
+                                    "is_blocked": {
+                                        "type": "boolean",
+                                        "example": false
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Horário atualizado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Horário possui consultas agendadas ou mínimo de 4h não atingido"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Agenda"
+                ],
+                "summary": "Remover horário",
+                "description": "Remove um horário da agenda. Não é possível remover horários que possuem consultas agendadas. A agenda deve manter no mínimo 4h semanais.",
+                "operationId": "97fe045cc82e710c2b7f51d2be975271",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Horário removido",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Horário possui consultas agendadas ou mínimo de 4h não seria atingido"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Appointment": {
+                "title": "Consulta",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "status": {
+                        "type": "string",
+                        "enum": [
+                            "PENDING",
+                            "CONFIRMED",
+                            "COMPLETED",
+                            "CANCELLED"
+                        ],
+                        "example": "PENDING"
+                    },
+                    "type": {
+                        "type": "string",
+                        "example": "PRESENTIAL"
+                    },
+                    "scheduled_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-12-01 14:00:00"
+                    },
+                    "duration_minutes": {
+                        "type": "integer",
+                        "example": 30
+                    },
+                    "price": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 150
+                    },
+                    "notes": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "patient": {
+                        "$ref": "#/components/schemas/Patient"
+                    },
+                    "doctor": {
+                        "$ref": "#/components/schemas/Doctor"
+                    }
+                },
+                "type": "object"
+            },
+            "Doctor": {
+                "title": "Médico",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "crm": {
+                        "type": "string",
+                        "example": "123456-SP"
+                    },
+                    "specialty": {
+                        "type": "string",
+                        "example": "Cardiologia"
+                    },
+                    "qualification": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "is_active": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "user": {
+                        "$ref": "#/components/schemas/User"
+                    }
+                },
+                "type": "object"
+            },
+            "Patient": {
+                "title": "Paciente",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "cpf": {
+                        "type": "string",
+                        "example": "123.456.789-00"
+                    },
+                    "birth_date": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "1990-01-15"
+                    },
+                    "gender": {
+                        "type": "string",
+                        "enum": [
+                            "M",
+                            "F",
+                            "OTHER"
+                        ],
+                        "nullable": true
+                    },
+                    "address": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "user": {
+                        "$ref": "#/components/schemas/User"
+                    }
+                },
+                "type": "object"
+            },
+            "User": {
+                "title": "Usuário",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "João Silva"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "example": "joao@example.com"
+                    },
+                    "phone": {
+                        "type": "string",
+                        "example": "(11) 99999-9999"
+                    },
+                    "role": {
+                        "type": "string",
+                        "enum": [
+                            "PATIENT",
+                            "DOCTOR",
+                            "ADMIN"
+                        ],
+                        "example": "PATIENT"
+                    },
+                    "is_active": {
+                        "type": "boolean",
+                        "example": true
+                    }
+                },
+                "type": "object"
+            }
+        },
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "description": "Token de autenticação Sanctum",
+                "name": "Authorization",
+                "in": "header",
+                "bearerFormat": "JWT",
+                "scheme": "bearer"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Administração",
+            "description": "Endpoints administrativos"
+        },
+        {
+            "name": "Relatórios",
+            "description": "Relatórios administrativos"
+        },
+        {
+            "name": "Consultas",
+            "description": "Gerenciamento de consultas médicas"
+        },
+        {
+            "name": "Autenticação",
+            "description": "Endpoints de autenticação e gerenciamento de sessão"
+        },
+        {
+            "name": "Agenda"
+        },
+        {
+            "name": "Observações"
+        },
+        {
+            "name": "Convênios"
+        }
+    ]
+}
