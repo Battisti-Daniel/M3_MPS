@@ -4,11 +4,17 @@ FRONTEND_CONTAINER=$(COMPOSE) exec frontend
 DB_CONTAINER=$(COMPOSE) exec db
 REDIS_CONTAINER=$(COMPOSE) exec redis
 
-.PHONY: up down stop restart logs ps build rebuild install bootstrap seed key queue-backend queue-stop schedule-run reminders notifications-clean backend-shell frontend-shell db-shell db-root redis-shell frontend-build lint test test-backend test-frontend prod-build
+.PHONY: up down stop restart logs ps build rebuild install bootstrap seed key queue-backend queue-stop schedule-run reminders notifications-clean backend-shell frontend-shell db-shell db-root redis-shell frontend-build lint test test-backend test-frontend prod-build prepare
 
-# Start all services in detached mode
+# Prepare environment (generate package-lock.json for Docker build)
+prepare:
+	@echo "📦 Gerando package-lock.json do frontend..."
+	cd frontend && npm install --package-lock-only --legacy-peer-deps
+	@echo "✅ Pronto! Agora execute: make up"
+
+# Start all services in detached mode (with build)
 up:
-	$(COMPOSE) up -d
+	$(COMPOSE) up -d --build
 
 # Stop and remove containers, networks, images and volumes created by compose
 down:
@@ -41,7 +47,7 @@ rebuild:
 	$(COMPOSE) up -d
 
 # One-shot setup: build images, install deps, run migrations + seeders
-install: build
+install: prepare build
 	# Backend dependencies
 	$(COMPOSE) run --rm backend composer install
 	$(COMPOSE) run --rm backend php artisan key:generate

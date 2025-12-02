@@ -66,27 +66,36 @@ O **Agenda+** é um sistema completo de agendamento médico que permite:
 
 1. Clone o repositório:
 ```bash
-git clone <repository-url>
-cd "app agenda+"
+git clone https://github.com/Battisti-Daniel/M3_MPS.git
+cd M3_MPS
 ```
 
-2. Inicie os containers:
+2. Configure as variáveis de ambiente:
+```bash
+cp backend/.env.example backend/.env
+```
+
+3. Gere o arquivo `package-lock.json` do frontend (necessário para o Docker):
+```bash
+cd frontend
+npm install --package-lock-only --legacy-peer-deps
+cd ..
+```
+
+4. Inicie os containers:
 ```bash
 docker-compose up -d --build
 ```
 
-3. Inicie os containers:
-```bash
-docker-compose up -d
-```
+> **Nota (Windows PowerShell):** O comando pode exibir texto em vermelho e "exit code 1", mas isso é um falso positivo do PowerShell. Verifique se os containers estão rodando com `docker ps`.
 
-4. Execute as migrações:
+5. Execute as migrações:
 ```bash
 docker-compose exec backend php artisan migrate
 docker-compose exec backend php artisan db:seed
 ```
 
-5. Acesse a aplicação:
+6. Acesse a aplicação:
 - Frontend: http://localhost:3000
 - Backend API: http://localhost:8000
 - API Docs (Swagger): http://localhost:8000/api/documentation
@@ -257,6 +266,16 @@ docker exec agenda_backend php artisan queue:work --once
 - Documente mudanças significativas
 
 ## 🔧 Troubleshooting
+
+### Falso positivo de erro no PowerShell (Windows)
+
+Ao executar `docker-compose up -d --build` no Windows PowerShell, você pode ver mensagens em vermelho e "exit code 1", mesmo quando tudo funcionou corretamente. Isso acontece porque o PowerShell interpreta qualquer output em stderr como erro.
+
+**Como verificar se funcionou:**
+```powershell
+docker ps
+```
+Se os containers estiverem listados com status "Up", está tudo funcionando!
 
 ### Erro: `package-lock.json not found` ao rodar Docker
 

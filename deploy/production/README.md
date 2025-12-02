@@ -7,6 +7,19 @@ Este diretório contém a stack Docker orientada a produção, com imagens otimi
 - Docker 24+
 - Docker Compose v2
 - Variáveis de ambiente preenchidas (ver arquivos `*.env.example`)
+- Arquivo `frontend/package-lock.json` gerado (ver seção abaixo)
+
+## Preparação do Frontend
+
+Antes de construir as imagens Docker, certifique-se de que o arquivo `package-lock.json` existe no diretório `frontend/`:
+
+```bash
+cd frontend
+npm install --package-lock-only --legacy-peer-deps
+cd ..
+```
+
+> **Importante:** Sem este arquivo, o build do Docker falhará com o erro `package-lock.json not found`.
 
 ## Passo a passo
 
