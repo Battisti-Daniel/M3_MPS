@@ -66,7 +66,7 @@ O **Agenda+** é um sistema completo de agendamento médico que permite:
 1. Clone o repositório:
 ```bash
 git clone <repository-url>
-cd "app agenda+"
+cd M3_MPS
 ```
 
 2. Configure as variáveis de ambiente:
@@ -75,18 +75,25 @@ cp backend/.env.example backend/.env
 cp frontend/.env.example frontend/.env.local
 ```
 
-3. Inicie os containers:
+3. Gere o arquivo `package-lock.json` do frontend (necessário para o Docker):
 ```bash
-docker-compose up -d
+cd frontend
+npm install --package-lock-only --legacy-peer-deps
+cd ..
 ```
 
-4. Execute as migrações:
+4. Inicie os containers:
+```bash
+docker-compose up -d --build
+```
+
+5. Execute as migrações:
 ```bash
 docker-compose exec backend php artisan migrate
 docker-compose exec backend php artisan db:seed
 ```
 
-5. Acesse a aplicação:
+6. Acesse a aplicação:
 - Frontend: http://localhost:3000
 - Backend API: http://localhost:8000
 - API Docs (Swagger): http://localhost:8000/api/documentation
@@ -219,6 +226,57 @@ npm run test:watch
 - Escreva testes para novas funcionalidades
 - Mantenha a cobertura de testes acima de 70%
 - Documente mudanças significativas
+
+## 🔧 Troubleshooting
+
+### Erro: `package-lock.json not found` ao rodar Docker
+
+Se ao executar `docker-compose up -d --build` você receber o erro:
+```
+failed to compute cache key: "/frontend/package-lock.json": not found
+```
+
+**Solução:** Gere o arquivo `package-lock.json` antes de construir os containers:
+```bash
+cd frontend
+npm install --package-lock-only --legacy-peer-deps
+cd ..
+docker-compose up -d --build
+```
+
+### Containers não iniciam corretamente
+
+1. Verifique se as portas necessárias estão disponíveis:
+   - 3000 (Frontend)
+   - 8000 (Backend)
+   - 5434 (PostgreSQL)
+   - 6379 (Redis)
+   - 1025, 8025 (Mailpit)
+
+2. Limpe os containers e volumes antigos:
+```bash
+docker-compose down -v
+docker-compose up -d --build
+```
+
+### Erro de permissões no backend
+
+Se ocorrerem erros de permissão no Laravel:
+```bash
+docker-compose exec backend chmod -R 775 storage bootstrap/cache
+docker-compose exec backend chown -R www-data:www-data storage bootstrap/cache
+```
+
+### Verificar logs dos containers
+
+```bash
+# Logs de todos os containers
+docker-compose logs
+
+# Logs de um container específico
+docker-compose logs backend
+docker-compose logs frontend
+```
 
 ## 📝 Licença
 
